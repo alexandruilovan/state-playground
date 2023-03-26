@@ -1,0 +1,100 @@
+protocol TransactionState {
+    func approve(transaction: Transaction)
+    func decline(transaction: Transaction)
+    func cancel(transaction: Transaction)
+    func refund(transaction: Transaction)
+}
+
+class PendingState: TransactionState {
+    func approve(transaction: Transaction) {
+        transaction.state = ApprovedState()
+        print("Transaction Approved")
+    }
+    func decline(transaction: Transaction) {
+        transaction.state = DeclinedState()
+        print("Transaction Declined")
+    }
+    func cancel(transaction: Transaction) {
+        transaction.state = CanceledState()
+        print("Transaction Canceled")
+    }
+    func refund(transaction: Transaction) {
+        print("Cannot refund a pending transaction")
+    }
+}
+
+class ApprovedState: TransactionState {
+    func approve(transaction: Transaction) {
+        print("Transaction already approved")
+    }
+    func decline(transaction: Transaction) {
+        print("Cannot decline an approved transaction")
+    }
+    func cancel(transaction: Transaction) {
+        transaction.state = CanceledState()
+        print("Transaction Canceled")
+    }
+    func refund(transaction: Transaction) {
+        transaction.state = RefundedState()
+        print("Transaction Refunded")
+    }
+}
+
+class DeclinedState: TransactionState {
+    func approve(transaction: Transaction) {
+        print("Cannot approve a declined transaction")
+    }
+    func decline(transaction: Transaction) {
+        print("Transaction already declined")
+    }
+    func cancel(transaction: Transaction) {
+        print("Cannot cancel a declined transaction")
+    }
+    func refund(transaction: Transaction) {
+        print("Cannot refund a declined transaction")
+    }
+}
+
+class CanceledState: TransactionState {
+    func approve(transaction: Transaction) {
+        print("Cannot approve a canceled transaction")
+    }
+    func decline(transaction: Transaction) {
+        print("Cannot decline a canceled transaction")
+    }
+    func cancel(transaction: Transaction) {
+        print("Transaction already canceled")
+    }
+    func refund(transaction: Transaction) {
+        print("Cannot refund a canceled transaction")
+    }
+}
+
+class RefundedState: TransactionState {
+    func approve(transaction: Transaction) {
+        print("Cannot approve a refunded transaction")
+    }
+    func decline(transaction: Transaction) {
+        print("Cannot decline a refunded transaction")
+    }
+    func cancel(transaction: Transaction) {
+        print("Cannot cancel a refunded transaction")
+    }
+    func refund(transaction: Transaction) {
+        print("Transaction already refunded")
+    }
+}
+
+class Transaction {
+    var state: TransactionState
+    
+    init(state: TransactionState) {
+        self.state = state
+    }
+}
+
+let transaction = Transaction(state: PendingState())
+transaction.state.approve(transaction: transaction)
+transaction.state.refund(transaction: transaction)
+transaction.state.decline(transaction: transaction)
+transaction.state.cancel(transaction: transaction)
